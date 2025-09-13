@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hack-a-Mini</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Press Start 2P', cursive;
+      background-size: cover;
+      color: white;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background-color: #fdbc3d;
+      overflow-x: hidden;
+    }
+
+    .timer-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      text-shadow: 2px 2px 4px black;
+      margin-top: 0;
+      margin-bottom: 18px;
+    }
+
+    #timer {
+      font-size: 3rem;
+      color: red;
+      text-shadow: 3px 3px 6px black;
+      margin-top: 20px;
+      margin-bottom: 26px;
+    }
+
+    .mario {
+      width: 60px;
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      animation: run 20s linear infinite;
+      display: none;
+    }
+
+    @keyframes run {
+      from { left: -100px; }
+      to { left: 100%; }
+    }
+
+    .logo {
+      position: absolute;
+      left: 20px;
+      top: -70px;
+      width: 300px;
+      height: auto;
+      z-index: 10;
+    }
+
+    .coin {
+      position: fixed;
+      top: 20vh;
+      width: 40px;
+      height: 40px;
+      background: url('coin.png') no-repeat center/contain;
+      z-index: 20;
+      animation: coin-float 4s linear;
+    }
+    @keyframes coin-float {
+      from { opacity: 1; top: 20vh;}
+      to { opacity: 0; top: 5vh;}
+    }
+
+    @media (max-width: 600px) {
+      .timer-container {
+        width: 98%;
+      }
+      h1 {
+        font-size: 1.3rem;
+      }
+      #timer {
+        font-size: 2rem;
+      }
+      .mario {
+        width: 42px;
+        bottom: 10px;
+      }
+      .logo {
+        width: 160px;
+        left: 5px;
+        top: 0px;
+      }
+      .coin {
+        width: 24px;
+        height: 24px;
+      }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+  <img src="logo.png" alt="Logo" class="logo">
+  <div class="timer-container">
+    <h1>Hack-a-Mini</h1>
+    <h3 style="color: #212121; margin-top: 0; margin-bottom: 18px;">Presented by Lords Skill Academy</h3>
+    <div id="timer">06:00:00</div>
+  </div>
+  <img src="mario.png" class="mario" id="mario" alt="Mario running">
+
+  <script>
+    // Game timing setup
+    const startDateTime = new Date("2025-09-15T12:00:00"); // Local time
+    const endDateTime = new Date("2025-09-15T18:00:00");   // Local time
+
+    const timerEl = document.getElementById("timer");
+    const marioEl = document.getElementById("mario");
+
+    let waitingInterval;
+    let timerInterval;
+    let coinInterval;
+    let music;
+    let waitMusic;
+
+    function showWaitingCountdown() {
+      const now = new Date();
+      let timeLeft = Math.floor((startDateTime - now) / 1000); // seconds left
+
+      if (timeLeft > 0) {
+        let hours = Math.floor(timeLeft / 3600);
+        let minutes = Math.floor((timeLeft % 3600) / 60);
+        let seconds = timeLeft % 60;
+        timerEl.textContent = `Game starts in ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        marioEl.style.display = "none";
+
+        // Play waiting music if not already playing
+        if (!waitMusic || waitMusic.paused) {
+          if (waitMusic) waitMusic.pause();
+          waitMusic = new Audio("wait-time.mp3");
+          waitMusic.loop = true;
+          waitMusic.volume = 0.4;
+          waitMusic.play();
+        }
+      } else {
+        clearInterval(waitingInterval);
+        if (waitMusic) waitMusic.pause();
+        startGameTimer();
+      }
+    }
+
+    function startGameTimer() {
+      // Show Mario sprite
+      marioEl.style.display = "block";
+      // Start Mario music
+      const musicTracks = ["music.mp3"];
+      const chosenTrack = musicTracks[Math.floor(Math.random() * musicTracks.length)];
+      music = new Audio(chosenTrack);
+      music.loop = true;
+      music.volume = 0.4;
+      music.play();
+
+      // Start timer and coins
+      timerInterval = setInterval(updateTimer, 1000);
+      updateTimer();
+      coinInterval = setInterval(spawnCoin, 30000);
+    }
+
+    function updateTimer() {
+      const now = new Date();
+      let timeLeft = Math.floor((endDateTime - now) / 1000);
+
+      if (timeLeft > 0) {
+        let hours = Math.floor(timeLeft / 3600);
+        let minutes = Math.floor((timeLeft % 3600) / 60);
+        let seconds = timeLeft % 60;
+
+        timerEl.textContent =
+          String(hours).padStart(2, '0') + ":" +
+          String(minutes).padStart(2, '0') + ":" +
+          String(seconds).padStart(2, '0');
+      } else {
+        timerEl.textContent = "00:00:00";
+        clearInterval(timerInterval);
+        clearInterval(coinInterval);
+        if (music) music.pause();
+        new Audio("https://archive.org/download/SuperMarioBrosLevelComplete/smb_level_complete.mp3").play();
+        alert("⏰ Time’s up! Mario wins!");
+      }
+    }
+
+    function spawnCoin() {
+      const coin = document.createElement("div");
+      coin.classList.add("coin");
+      coin.style.left = Math.random() * 90 + "vw";
+      document.body.appendChild(coin);
+
+      new Audio("https://archive.org/download/SuperMarioCoinSoundEffect/smb_coin.mp3").play();
+
+      setTimeout(() => {
+        coin.remove();
+      }, 4000);
+    }
+
+    // Initial waiting countdown or start game
+    if (new Date() < startDateTime) {
+      showWaitingCountdown();
+      waitingInterval = setInterval(showWaitingCountdown, 1000);
+    } else if (new Date() < endDateTime) {
+      startGameTimer();
+    } else {
+      timerEl.textContent = "00:00:00";
+      marioEl.style.display = "none";
+    }
+  </script>
+</body>
+</html>
