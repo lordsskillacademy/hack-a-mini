@@ -5,121 +5,185 @@
   <title>Hack-a-Mini</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      font-family: 'Press Start 2P', cursive;
-      background-size: cover;
-      color: white;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-      background-color: #fdbc3d;
-      overflow-x: hidden;
-    }
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: 'Press Start 2P', cursive;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ff9800 0%, #fdbc3d 50%, #fbc02d 100%);
+  color: white;
+  text-align: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow-x: hidden;
+}
 
-    .timer-container {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 90%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
+/* Main content container */
+.timer-container {
+  position: relative;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  max-width: 700px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  background: rgba(30,30,30,0.05);
+  border-radius: 1rem;
+  box-sizing: border-box;
+}
 
-    h1 {
-      font-size: 2.2rem;
-      text-shadow: 2px 2px 4px black;
-      margin-top: 0;
-      margin-bottom: 18px;
-    }
+h1 {
+  font-size: 2rem;
+  text-shadow: 2px 2px 4px black;
+  margin: 0;
+  word-break: break-word;
+}
+h3 {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+#timer {
+  font-size: 2.5rem;
+  color: red;
+  text-shadow: 3px 3px 6px black;
+  margin: 1rem 0 1.5rem 0;
+}
 
-    #timer {
-      font-size: 3rem;
-      color: red;
-      text-shadow: 3px 3px 6px black;
-      margin-top: 20px;
-      margin-bottom: 26px;
-    }
+/* Logo at top center */
+.logo {
+  display: block;
+  margin: 1.5rem auto 0.5rem auto;
+  max-width: 190px;
+  width: 90vw;
+  height: auto;
+  z-index: 10;
+}
 
-    .mario {
-      width: 60px;
-      position: absolute;
-      bottom: 20px;
-      left: 0;
-      animation: run 20s linear infinite;
-      display: none;
-    }
+/* Mario sprite, animated at the bottom */
+.mario {
+  width: 60px;
+  min-width: 38px;
+  position: fixed;
+  left: 0;
+  bottom: 10px;
+  animation: run 20s linear infinite;
+  display: none;
+  z-index: 20;
+}
+@keyframes run {
+  from { left: -80px; }
+  to { left: 100vw; }
+}
 
-    @keyframes run {
-      from { left: -100px; }
-      to { left: 100%; }
-    }
+/* Coin animation */
+.coin {
+  position: fixed;
+  top: 20vh;
+  left: 50vw;
+  width: 40px;
+  height: 40px;
+  background: url('coin.png') no-repeat center/contain;
+  z-index: 20;
+  animation: coin-float 4s linear;
+}
+@keyframes coin-float {
+  from { opacity: 1; top: 20vh;}
+  to { opacity: 0; top: 5vh;}
+}
 
-    .logo {
-      position: absolute;
-      left: 20px;
-      top: -70px;
-      width: 300px;
-      height: auto;
-      z-index: 10;
-    }
+/* Decorative images: keep away from main content */
+.side-img, .bottom-img, .bottom-im {
+  position: fixed;
+  z-index: 1;
+  pointer-events: none;
+}
+.left-img {
+  left: 0;
+  top: 15%;
+  width: 90px;
+  height: auto;
+}
+.right-img {
+  right: 0;
+  top: 15%;
+  width: 80px;
+  height: auto;
+}
+.bottom-img {
+  right: 5vw;
+  bottom: 0;
+  width: 90px;
+  height: auto;
+}
+.bottom-im {
+  left: 5vw;
+  bottom: 0;
+  width: 80px;
+  height: auto;
+}
+img {
+  max-width: 100%;
+  height: auto;
+}
 
-    .coin {
-      position: fixed;
-      top: 20vh;
-      width: 40px;
-      height: 40px;
-      background: url('coin.png') no-repeat center/contain;
-      z-index: 20;
-      animation: coin-float 4s linear;
-    }
-    @keyframes coin-float {
-      from { opacity: 1; top: 20vh;}
-      to { opacity: 0; top: 5vh;}
-    }
-
-    @media (max-width: 600px) {
-      .timer-container {
-        width: 98%;
-      }
-      h1 {
-        font-size: 1.3rem;
-      }
-      #timer {
-        font-size: 2rem;
-      }
-      .mario {
-        width: 42px;
-        bottom: 10px;
-      }
-      .logo {
-        width: 160px;
-        left: 5px;
-        top: 0px;
-      }
-      .coin {
-        width: 24px;
-        height: 24px;
-      }
-    }
+/* Mobile Tweaks */
+@media (max-width: 900px) {
+  .logo { max-width: 120px; }
+  .side-img, .bottom-img, .bottom-im {
+    width: 40px;
+  }
+  .mario { width: 40px; }
+  h1 { font-size: 1.2rem; }
+  h3 { font-size: 0.8rem; }
+  #timer { font-size: 1.4rem; }
+}
+@media (max-width: 600px) {
+  .timer-container {
+    padding: 1rem 0.5rem;
+    max-width: 95vw;
+  }
+  h1 { font-size: 1.1rem; }
+  h3 { font-size: 0.8rem; }
+  #timer { font-size: 1.2rem; }
+  .logo { max-width: 90px; }
+  .side-img, .bottom-img, .bottom-im {
+    width: 32px;
+  }
+  .mario { width: 32px; }
+}
+/* Even smaller screens */
+@media (max-width: 400px) {
+  h1 { font-size: 1rem; }
+  #timer { font-size: 1rem; }
+  .logo { max-width: 60px; }
+}
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
   <img src="logo.png" alt="Logo" class="logo">
+  <img src="left.png" alt="Left side image" class="side-img left-img">
+  <img src="right.png" alt="Right side image" class="side-img right-img">
+  <img src="3.png" alt="Bottom image" class="bottom-img">
+  <img src="b.png" alt="Bottom image" class="bottom-im">
   <div class="timer-container">
     <h1>Hack-a-Mini</h1>
-    <h3 style="color: #212121; margin-top: 0; margin-bottom: 18px;">Presented by Lords Skill Academy</h3>
+    <h3 style="color: #212121;">Presented by Lords Skill Academy</h3>
     <div id="timer">06:00:00</div>
   </div>
   <img src="mario.png" class="mario" id="mario" alt="Mario running">
 
   <script>
     // Game timing setup
-    const startDateTime = new Date("2025-09-15T12:00:00"); // Local time
-    const endDateTime = new Date("2025-09-15T18:00:00");   // Local time
+    const startDateTime = new Date("2025-09-15T12:00:00");
+    const endDateTime = new Date("2025-09-15T18:00:00");
 
     const timerEl = document.getElementById("timer");
     const marioEl = document.getElementById("mario");
@@ -132,7 +196,7 @@
 
     function showWaitingCountdown() {
       const now = new Date();
-      let timeLeft = Math.floor((startDateTime - now) / 1000); // seconds left
+      let timeLeft = Math.floor((startDateTime - now) / 1000);
 
       if (timeLeft > 0) {
         let hours = Math.floor(timeLeft / 3600);
@@ -147,7 +211,7 @@
           waitMusic = new Audio("wait-time.mp3");
           waitMusic.loop = true;
           waitMusic.volume = 0.4;
-          waitMusic.play();
+          waitMusic.play().catch(() => {/* Autoplay might be blocked */});
         }
       } else {
         clearInterval(waitingInterval);
@@ -165,7 +229,7 @@
       music = new Audio(chosenTrack);
       music.loop = true;
       music.volume = 0.4;
-      music.play();
+      music.play().catch(() => {/* Autoplay might be blocked */});
 
       // Start timer and coins
       timerInterval = setInterval(updateTimer, 1000);
@@ -199,7 +263,7 @@
     function spawnCoin() {
       const coin = document.createElement("div");
       coin.classList.add("coin");
-      coin.style.left = Math.random() * 90 + "vw";
+      coin.style.left = Math.min(90, Math.max(5, Math.random() * 90)) + "vw";
       document.body.appendChild(coin);
 
       new Audio("https://archive.org/download/SuperMarioCoinSoundEffect/smb_coin.mp3").play();
